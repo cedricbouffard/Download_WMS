@@ -23,13 +23,16 @@ dwnld = function(x,bbox){
                         glue::glue("WMS:https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={ymin},{xmin},{ymax},{xmax}&CRS=EPSG:4326&LAYERS=RADAR_1KM_RRAI&TIME={x}Z"),
                         '" ',output
   )))
-  
-  return(output)
+  r=terra::rast(output)
+  names(r)=c('R','G','B')
+  r$a = r$R+r$G+r$B
+  r$R[r$a==0] <- NA
+  r$G[r$a==0] <- NA
+  r$B[r$a==0] <- NA
+  return(r)
   
 }
 
 liste_image = purrr::pmap(.l = list(x =date$date_chr),
             .f = dwnld,
             bbox = bbox)
-
-r=raster::brick(liste_image[1])
