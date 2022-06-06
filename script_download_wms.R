@@ -4,12 +4,7 @@ canada <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
   filter(name == "Canada") %>% sf::st_transform(4326)
 
 bbox <- sf::st_bbox(canada) %>% as.numeric()
-xmin <- bbox[1]
-ymin <- bbox[2]
-xmax <- bbox[3]
-ymax <- bbox[4]
-date <- "2022-06-06"
-hour <- "20:40:00"
+
 
 date =tidyr::crossing(jour = format(c(lubridate::today(tzone = 'UTC'), lubridate::today(tzone = 'UTC')-1), '%Y-%m-%d'),
                       heure = formatC(0:23, width = 2, format = "d", flag = "0"),
