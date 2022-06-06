@@ -13,7 +13,7 @@ hour <- "20:40:00"
 
 date =tidyr::crossing(jour = format(c(lubridate::today(tzone = 'UTC'), lubridate::today(tzone = 'UTC')-1), '%Y-%m-%d'),
                       heure = formatC(0:23, width = 2, format = "d", flag = "0"),
-                      minute = formatC(c(0, 20, 40), width = 2, format = "d", flag = "0")) %>%
+                      minute = formatC(seq(0,50, by = 10), width = 2, format = "d", flag = "0")) %>%
   mutate(date_chr = paste0(jour,'T', heure,':', minute,':00')) %>% 
   mutate(date = lubridate::as_datetime(date_chr, tz='UTC')) %>%
   filter(date>= lubridate::now(tzone = 'UTC')-lubridate::hours(3) & date <= lubridate::now(tzone = 'UTC'))
@@ -37,3 +37,4 @@ liste_image = purrr::pmap(.l = list(x =date$date_chr),
             .f = dwnld,
             bbox = bbox)
 
+r=raster::brick(liste_image[1])
