@@ -20,15 +20,17 @@ dwnld = function(x,bbox){
   ymax <- bbox[4]
   output = tempfile(fileext = ".tif")
   system(noquote(paste0('gdalwarp -tr .01 .01 "',
-                        glue::glue("WMS:https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={ymin},{xmin},{ymax},{xmax}&CRS=EPSG:4326&LAYERS=RADAR_1KM_RRAI&TIME={x}Z"),
+                        glue::glue("WMS:https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={ymin},{xmin},{ymax},{xmax}&CRS=EPSG:4326&LAYERS=RADAR_1KM_RRAI&TIME={x}Z&FORMAT=image/png&transparent=true"),
                         '" ',output
   )))
   r=terra::rast(output)
-  names(r)=c('R','G','B')
-  r$a = r$R+r$G+r$B
-  r$R[r$a==0] <- NA
-  r$G[r$a==0] <- NA
-  r$B[r$a==0] <- NA
+  names(r)=c('R','G','B','Alpha')
+  # r$a = r$R+r$G+r$B
+  r$R[r$Alpha!=255] <- NA
+  r$G[r$Alpha!=255] <- NA
+  r$B[r$Alpha!=255] <- NA
+  r = r[[ c(1,2,3) ]]
+
   return(r)
   
 }
